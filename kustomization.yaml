@@ -9,4 +9,4 @@ resources:
 # `name` must match the image in helloworld-web.yaml (name portion, before the tag).
 images:
   - name: impatspence/helloworld_web
-    newTag: latest
+    newTag: "20"
