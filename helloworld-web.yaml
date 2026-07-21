@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: helloworld-web
-        image: impatspence/helloworld_web:19
+        image: impatspence/helloworld_web:25
         imagePullPolicy: IfNotPresent               # immutable build-number tags => no need for Always
         ports:
         - containerPort: 80            # nginx:alpine listens on 80
@@ -55,9 +55,8 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  # One Ingress, two rules — kustomize requires unique resource IDs, so the
-  # host-based and hostless routes live here rather than in two Ingresses.
   rules:
+  # Given a host so it doesn't collide with moonshine's hostless "/" rule.
   # hello.localhost resolves to 127.0.0.1 — browse to http://hello.localhost
   - host: hello.localhost
     http:
@@ -69,13 +68,21 @@ spec:
             name: helloworld-web   # the ClusterIP Service above
             port:
               number: 80           # Service port (targets 80 in the pods)
-  # no host: matches any hostname, incl. plain 127.0.0.1
-  - http:
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: helloworld-web
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:                        # no host: matches any hostname, incl. plain 127.0.0.1
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: helloworld-web   # the ClusterIP Service above
+            name: helloworld-web      # the ClusterIP Service above
             port:
-              number: 80           # Service port (targets 80 in the pods)
+              number: 80         # Service port (targets 8081 in the pods)\
