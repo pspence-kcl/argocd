@@ -55,8 +55,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  # One Ingress, two rules — kustomize requires unique resource IDs, so the
+  # host-based and hostless routes live here rather than in two Ingresses.
   rules:
-  # Given a host so it doesn't collide with moonshine's hostless "/" rule.
   # hello.localhost resolves to 127.0.0.1 — browse to http://hello.localhost
   - host: hello.localhost
     http:
@@ -68,21 +69,13 @@ spec:
             name: helloworld-web   # the ClusterIP Service above
             port:
               number: 80           # Service port (targets 80 in the pods)
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: helloworld-web
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - http:                        # no host: matches any hostname, incl. plain 127.0.0.1
+  # no host: matches any hostname, incl. plain 127.0.0.1
+  - http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: helloworld-web      # the ClusterIP Service above
+            name: helloworld-web   # the ClusterIP Service above
             port:
-              number: 80         # Service port (targets 8081 in the pods)\
+              number: 80           # Service port (targets 80 in the pods)
