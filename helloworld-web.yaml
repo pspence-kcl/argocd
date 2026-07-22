@@ -32,7 +32,9 @@ spec:
             port: 80
           initialDelaySeconds: 10
           periodSeconds: 20
-      tolerations:
+      nodeSelector:
+        dedicated: helloworld-web    # pulls pods onto the node labeled dedicated=helloworld-web (minikube-m02)
+      tolerations:                   # lets those pods past the node's taint
       - key: "helloworld-web"
         operator: "Equal"
         value: "blue"
