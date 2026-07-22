@@ -32,6 +32,11 @@ spec:
             port: 80
           initialDelaySeconds: 10
           periodSeconds: 20
+      tolerations:
+      - key: "helloworld-web"
+        operator: "Equal"
+        value: "blue"
+        effect: "NoSchedule"
 ---
 apiVersion: v1
 kind: Service
